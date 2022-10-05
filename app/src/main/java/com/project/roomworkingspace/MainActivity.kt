@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var binding : ActivityMainBinding? = null
+    var arrayId: MutableList<Int> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,32 +25,42 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding?.root)
 
         val employeeDao = (application as EmployeeApp).db.employeeDao()
-        val dateDao = (application as EmployeeApp).db.employeeDao()
+        // val workDao = (application as EmployeeApp).db.employeeDao()
+        // val employeeWorkDao = (application as EmployeeApp).db.employeeDao()
+
+
 
         binding?.buttonAdd?.setOnClickListener {
-            addRecord(employeeDao,dateDao)
+            addRecord(employeeDao,arrayId)
         }
 
         lifecycleScope.launch {
+
+            employeeDao.insert(WorkEntity(workName = "copy", workTime = 15))
+            employeeDao.insert(WorkEntity(workName = "delete", workTime = 10))
+            employeeDao.insert(WorkEntity(workName = "save", workTime = 20))
+            arrayId.add(1)
+            arrayId.add(3)
+            arrayId.add(2)
             employeeDao.fetchAllEmployees().collect {
                 val list = ArrayList(it)
                 setupListOfDataIntoRecyclerView(list,employeeDao)
             }
+
+
         }
 
     }
 
-    fun addRecord(employeeDao: EmployeeDao,dateDao: EmployeeDao){
+    fun addRecord(employeeDao: EmployeeDao,arrayList: MutableList<Int>){
         val name = binding?.etName?.text.toString()
         val email = binding?.etMailId?.text.toString()
+
         if(name.isNotEmpty() && email.isNotEmpty())
         {
             lifecycleScope.launch {
                 employeeDao.insert(EmployeeEntity(name= name, email = email))
-                var arrayList: ArrayList<String> = ArrayList()
-                arrayList.add(name)
-                arrayList.add(email)
-                dateDao.insert(NameEntity(date = arrayList))
+
                 Toast.makeText(applicationContext,"record saved",Toast.LENGTH_LONG).show()
                 binding?.etName?.text?.clear()
                 binding?.etMailId?.text?.clear()
@@ -65,6 +76,11 @@ class MainActivity : AppCompatActivity() {
             val itemAdapter = ItemAdapter(employeesList,
                 {    updateId ->
                     updateRecordDialog(updateId,employeeDao)
+
+                    lifecycleScope.launch {
+                        employeeDao.insert(EmployeeWorkCrossRef(employeeId= updateId,workId= 2))
+                    }
+
                 }, { deleteId ->
                     deleteRecordAlertDialog(deleteId,employeeDao)
                 }

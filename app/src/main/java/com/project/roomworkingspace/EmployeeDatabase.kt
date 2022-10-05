@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import java.util.jar.Attributes
 
-@Database(entities = [EmployeeEntity::class, NameEntity::class], version = 1)
+@Database(entities = [EmployeeEntity::class, WorkEntity::class, EmployeeWorkCrossRef::class], version = 1)
 abstract class EmployeeDatabase: RoomDatabase() {
 
     abstract fun employeeDao(): EmployeeDao

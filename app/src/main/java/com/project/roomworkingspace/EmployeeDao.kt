@@ -21,19 +21,37 @@ interface EmployeeDao {
     @Query("SELECT * FROM `employee-table` where id=:id")
     fun fetchEmployeeById(id: Int):Flow<EmployeeEntity>
 
+    @Query("SELECT * FROM `employee-table` where name=:name")
+    fun fetchEmployeeByName(name: String):Flow<EmployeeEntity>
+
     @Insert
-    suspend fun insert(employeeEntity: NameEntity)
+    suspend fun insert(employeeEntity: WorkEntity)
 
     @Update
-    suspend fun update(employeeEntity: NameEntity)
+    suspend fun update(employeeEntity: WorkEntity)
 
     @Delete
-    suspend fun delete(employeeEntity: NameEntity)
+    suspend fun delete(employeeEntity: WorkEntity)
 
-    @Query("SELECT * FROM `date-table`")
-    fun fetchAllDates():Flow<List<NameEntity>>
+    @Query("SELECT * FROM `work-table`")
+    fun fetchAllDates():Flow<List<WorkEntity>>
 
-    @Query("SELECT * FROM `date-table` where id=:id")
-    fun fetchDateById(id: Int):Flow<NameEntity>
+    @Query("SELECT * FROM `work-table` where id=:id")
+    fun fetchDateById(id: Int):Flow<WorkEntity>
+
+    @Insert
+    suspend fun insert(employeeEntity: EmployeeWorkCrossRef)
+
+    @Update
+    suspend fun update(employeeEntity: EmployeeWorkCrossRef)
+
+    @Delete
+    suspend fun delete(employeeEntity: EmployeeWorkCrossRef)
+
+    @Query("SELECT * FROM `employee-work-table` ")
+    fun fetchAllWorks():Flow<List<EmployeeWorkCrossRef>>
+
+    @Query("SELECT * FROM `employee-work-table` where employeeId=:id")
+    fun fetchWorksById(id: Int):Flow<EmployeeWorkCrossRef>
 
 }
